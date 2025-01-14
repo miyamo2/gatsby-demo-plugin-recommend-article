@@ -46,6 +46,7 @@ jobs:
             ${{ runner.os }}-gatsby-build-${{ github.sha }}-
 
       - name: Build
+        working-directory: ./gatsby-starter-blog
         env:
           GATSBY_CPU_COUNT: 2
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
