@@ -1,0 +1,64 @@
+name: Publish
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+permissions: write-all
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    services:
+      qdrant:
+          image: qdrant/qdrant:latest
+          ports:
+          - "6333:6333"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bun install
+
+      - name: Restore Gatsby cache
+        id: cache-primes-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ./.cache
+          key: ${{ runner.os }}-gatsby-build-${{ github.sha }}-${{ github.event.client_payload.event_id }}
+          restore-keys: |
+            ${{ runner.os }}-gatsby-build-${{ github.sha }}-
+
+      - name: Build
+        env:
+          GATSBY_CPU_COUNT: 2
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: bun run build --prefix-paths
+
+      - name: Save Gatsby cache
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ./.cache
+          key: ${{ runner.os }}-gatsby-build-${{ github.sha }}-${{ github.event.client_payload.event_id }}
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./gatsby-starter-blog/public
