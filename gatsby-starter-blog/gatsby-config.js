@@ -69,6 +69,8 @@ module.exports = {
         },
         openai: {
           apiKey: `${process.env.OPENAI_API_KEY}`,
+          embeddingModel:"text-embedding-3-large",
+          embeddingSize: 3072,
         },
         limit: 3,
         toPayload: node => {
