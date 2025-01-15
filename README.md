@@ -1,6 +1,6 @@
 # gatsby-demo-plugin-recommend-article
 
-demo for the [`gatsby-plugin-recommend-article`](https://miyamo2/gatsby-plugin-recommend-article)
+demo for the [`gatsby-plugin-recommend-article`](https://github.com/miyamo2/gatsby-plugin-recommend-article)
 
 [View the demo site on GitHub Pages](https://miyamo2.github.io/gatsby-demo-plugin-recommend-article/)
 
